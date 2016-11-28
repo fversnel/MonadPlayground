@@ -2,11 +2,9 @@
 using MonadPlayground.Tuples;
 
 namespace MonadPlayground.State {
-
     public delegate T2<A, State> WithState<A, State>(State state);
 
     public static class StateMonad {
-
         public static A ExtractValue<A, State>(this WithState<A, State> withState, State state) {
             return withState(state).First;
         }

@@ -37,43 +37,43 @@ namespace MonadPlayground {
             }
         }
 
-//        static void Main(string[] args) {
-//            var numbers = new [] {1, 3, 4, 12};
-//            var sum = numbers.Sum(ClockMonoid);
-////            Console.WriteLine(sum);
-////            Console.ReadLine();
-////
-////            var aapState = StateMonad<int, int>.Construct(42)
-////                .Bind(StateMonad<int, int>.Converter(aap1 => aap1 + 42))
-////                .Lookup(5)
-////                .Increment()
-////                .Increment();
-////            Console.WriteLine("aap " + aapState.Value + ", state " + aapState.State);
-////            Console.ReadLine();
+        static void Main(string[] args) {
+            var numbers = new [] {1, 3, 4, 12};
+            var sum = numbers.Sum(ClockMonoid);
+//            Console.WriteLine(sum);
+//            Console.ReadLine();
 //
-//
-//            var aNumber = from n in Maybe<int>.Just(30)
-//                          where n < 50
-//                          where n > 20
-//                          select n;
-//
-//            var state = from s in 42.WithState<int, int>()
-//                        from s1 in UpdateState(s, 5)
-//                        from s2 in UpdateState(s1, 4)
-//                        from s3 in UpdateState(s2, 3)
-//                        from s4 in UpdateState(s3, 2)
-//                        select s3;
-//
-//            var random = IOFns.FromRandom(new Random());
-//            var runProgram = from input in IOFns.ReadLinePrefix("input: ")
-//                             from r in IOFns.RandomRange(random, 5, 10)
-//                             from _1 in IOFns.WriteLine("State: " + state(0) + ", random number " + r)
-//                             from _2 in IOFns.WriteLine("input was: " + input)
-//                             from _3 in IOFns.ReadLinePrefix("press any key to exit")
-//                             select Unit.Default;
-//
-//            runProgram();
-//        }
+//            var aapState = StateMonad<int, int>.Construct(42)
+//                .Bind(StateMonad<int, int>.Converter(aap1 => aap1 + 42))
+//                .Lookup(5)
+//                .Increment()
+//                .Increment();
+//            Console.WriteLine("aap " + aapState.Value + ", state " + aapState.State);
+//            Console.ReadLine();
+
+
+            var aNumber = from n in Maybe<int>.Just(30)
+                          where n < 50
+                          where n > 20
+                          select n;
+
+            var state = from s in 42.WithState<int, int>()
+                        from s1 in UpdateState(s, 5)
+                        from s2 in UpdateState(s1, 4)
+                        from s3 in UpdateState(s2, 3)
+                        from s4 in UpdateState(s3, 2)
+                        select s3;
+
+            var random = IOFns.FromRandom(new Random());
+            var runProgram = from input in IOFns.ReadLinePrefix("input: ")
+                             from r in IOFns.RandomRange(random, 5, 10)
+                             from _1 in IOFns.WriteLine("State: " + state(0) + ", random number " + r)
+                             from _2 in IOFns.WriteLine("input was: " + input)
+                             from _3 in IOFns.ReadLinePrefix("press any key to exit")
+                             select Unit.Default;
+
+            runProgram();
+        }
 
         public static T Sum<T>(this IEnumerable<T> collection, IMonoid<T> monoid) {
             return collection.Aggregate(monoid.Add);

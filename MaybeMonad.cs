@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MonadPlayground {
+namespace MonadPlayground.Maybe {
     public struct Maybe<T> {
         private Maybe(T value, bool isJust) {
             IsJust = isJust;

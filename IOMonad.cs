@@ -37,14 +37,59 @@ namespace MonadPlayground.IO {
 
     public static class IOFns {
 
-        public static readonly Func<string, IO<Unit>> Write = IOMonad.AsIO<string>(line => Console.Write(line));
-        public static readonly Func<string, IO<Unit>> WriteLine = line => Write(line + Environment.NewLine);
-        public static readonly IO<string> ReadLine = () => Console.ReadLine();
-        public static readonly Func<string, IO<string>> ReadLinePrefix = text => {
-            return from _1 in Write(text)
-                from output in ReadLine
-                select output;
-        };
+        public class ConsoleFns {
+            public readonly IConsole Console;
+
+            public ConsoleFns(IConsole console) {
+                Console = console;
+            }
+
+            public IO<Unit> Write(char c) {
+                return () => {
+                    Console.Write(c);
+                    return Unit.Default;
+                };
+            }
+
+            public IO<Unit> Write(string s) {
+                return () => {
+                    for (int i = 0; i < s.Length; i++) {
+                        Console.Write(s[i]);
+                    }
+                    return Unit.Default;
+                };
+            }
+            public IO<Unit> WriteLine(string line) {
+                return Write(line + Environment.NewLine);
+            }
+
+            public IO<char> Read() {
+                return () => Console.Read();
+            }
+
+            public IO<string> ReadUntil(Func<string, bool> predicate) {
+                return () => {
+                    var result = "";
+                    while (!predicate(result)) {
+                        result += (from c in Read()
+                                   from _1 in Write(c)
+                                   select c)();
+                    }
+                    return result;
+                };
+            }
+
+            public IO<string> ReadLine() {
+                return from line in ReadUntil(r => r.EndsWith(Environment.NewLine))
+                       select line.Remove(line.LastIndexOf(Environment.NewLine));
+            }
+
+            public IO<string> ReadLinePrefix(string prefix) {
+                return from _1 in Write(prefix)
+                       from output in ReadLine()
+                       select output;
+            }
+        }
 
         public delegate int RandomGen();
         public static readonly Func<Random, RandomGen> FromRandom = random => () => random.Next();

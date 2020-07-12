@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using MonadPlayground.State;
 using MonadPlayground.IO;
+using MonadPlayground.Maybe;
+using MonadPlayground.Reader;
 using MonadPlayground.Tuples;
+using MonadPlayground.StringArithmetic;
 
 namespace MonadPlayground {
 
@@ -64,15 +68,31 @@ namespace MonadPlayground {
                         from s4 in UpdateState(s3, 2)
                         select s3;
 
+            var runReader = from s in 42.WithReader<int, ReaderEnvironment>()
+                            from s1 in ReadAndCalculate(s)
+                            from s2 in ReadAndCalculate(s1)
+                            select s2;
+
+            var readerResult = runReader(new ReaderEnvironment(5, "reader"));
+
+            var console = new IOFns.ConsoleFns(DotNetConsole.Default);
             var random = IOFns.FromRandom(new Random());
-            var runProgram = from input in IOFns.ReadLinePrefix("input: ")
+            var runProgram = from input in console.ReadLinePrefix("input: ")
                              from r in IOFns.RandomRange(random, 5, 10)
-                             from _1 in IOFns.WriteLine("State: " + state(0) + ", random number " + r)
-                             from _2 in IOFns.WriteLine("input was: " + input)
-                             from _3 in IOFns.ReadLinePrefix("press any key to exit")
+                             from _1 in console.WriteLine("State: " + state(0) + ", random number " + r)
+                             from _2 in console.WriteLine("input was: " + input + ", reader produced: " + readerResult)
+                             from _3 in console.ReadLinePrefix("press any key to exit")
                              select Unit.Default;
 
-            runProgram();
+
+            //runProgram();
+
+            var stringNumber = from a in "5"
+                               from a1 in a * 2
+                               select a1;
+
+            console.WriteLine("string number " + stringNumber)();
+            console.ReadLine()();
         }
 
         public static T Sum<T>(this IEnumerable<T> collection, IMonoid<T> monoid) {
@@ -81,6 +101,10 @@ namespace MonadPlayground {
 
         public static WithState<int, int> UpdateState(int value, int toAdd) {
             return state => (value + toAdd).With(state + 1);
+        }
+
+        public static Reader<int, ReaderEnvironment> ReadAndCalculate(int input) {
+            return env => input + env.ContextA;
         }
 
         public static Maybe<int> Under42(int value) {
@@ -102,6 +126,16 @@ namespace MonadPlayground {
                 return Maybe<int>.Just(value);
             }
             return Maybe<int>.Nothing;
+        }
+
+        public class ReaderEnvironment {
+            public readonly int ContextA;
+            public readonly string ContextB;
+
+            public ReaderEnvironment(int contextA, string contextB) {
+                ContextA = contextA;
+                ContextB = contextB;
+            }
         }
     }
 }

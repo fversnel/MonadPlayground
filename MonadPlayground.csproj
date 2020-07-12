@@ -40,13 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DotNetConsole.cs" />
+    <Compile Include="IConsole.cs" />
     <Compile Include="IOMonad.cs" />
     <Compile Include="MaybeMonad.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReaderMonad.cs" />
     <Compile Include="StateMonad.cs" />
-    <Compile Include="TryCatchExample.cs" />
+    <Compile Include="StringArithmeticMonad.cs" />
     <Compile Include="Tuples.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>

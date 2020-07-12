@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace MonadPlayground {
+namespace MonadPlayground.Reader {
     public delegate A Reader<A, Environment>(Environment environment);
 
     public static class ReaderMonad {
-        public static Reader<A, Environment> Construct<A, Environment>(A value) {
+        public static Reader<A, Environment> WithReader<A, Environment>(this A value) {
             return env => value;
         }
 
